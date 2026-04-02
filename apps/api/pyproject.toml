@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atendecrm-saas-api"
+version = "0.1.0"
+description = "API SaaS do AtendeCRM Meta"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "alembic>=1.15.2",
+  "asyncpg>=0.30.0",
+  "celery[redis]>=5.4.0",
+  "email-validator>=2.2.0",
+  "fastapi>=0.115.0,<1.0.0",
+  "httpx>=0.28.1",
+  "orjson>=3.10.15",
+  "passlib[bcrypt]>=1.7.4",
+  "pydantic-settings>=2.8.1",
+  "python-jose[cryptography]>=3.3.0",
+  "python-multipart>=0.0.20",
+  "sqlalchemy[asyncio]>=2.0.39",
+  "uvicorn[standard]>=0.34.0"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.5",
+  "pytest-asyncio>=0.25.3",
+  "ruff>=0.11.2"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
