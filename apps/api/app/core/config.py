@@ -1,7 +1,16 @@
 from functools import lru_cache
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from pydantic import EmailStr, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _replace_query_key(url: str, old_key: str, new_key: str) -> str:
+    parts = urlsplit(url)
+    query_items = []
+    for key, query_value in parse_qsl(parts.query, keep_blank_values=True):
+        query_items.append((new_key if key == old_key else key, query_value))
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query_items), parts.fragment))
 
 
 def _normalize_database_url(value: str) -> str:
@@ -10,7 +19,14 @@ def _normalize_database_url(value: str) -> str:
         normalized = normalized.replace("postgres://", "postgresql+asyncpg://", 1)
     elif normalized.startswith("postgresql://") and "+asyncpg" not in normalized:
         normalized = normalized.replace("postgresql://", "postgresql+asyncpg://", 1)
+    if normalized.startswith("postgresql+asyncpg://"):
+        normalized = _replace_query_key(normalized, "sslmode", "ssl")
     return normalized
+
+
+def make_sync_database_url(value: str) -> str:
+    normalized = value.strip().replace("postgresql+asyncpg://", "postgresql://", 1)
+    return _replace_query_key(normalized, "ssl", "sslmode")
 
 
 class Settings(BaseSettings):
