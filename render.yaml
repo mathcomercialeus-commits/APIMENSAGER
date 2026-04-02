@@ -6,7 +6,7 @@ services:
     region: virginia
     rootDir: apps/api
     buildCommand: pip install --upgrade pip && pip install .
-    startCommand: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/v1/health
     envVars:
       - key: ENVIRONMENT
@@ -33,7 +33,7 @@ services:
       - key: CELERY_TASK_ALWAYS_EAGER
         value: "true"
       - key: AUTO_CREATE_TABLES
-        value: "false"
+        value: "true"
       - key: BACKEND_CORS_ORIGINS
         value: '["https://atendecrm-preview-web.onrender.com"]'
       - key: SEED_SUPERADMIN

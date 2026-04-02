@@ -13,7 +13,7 @@ Este projeto pode ser publicado no Render para um preview rapido com o arquivo [
 
 - O Render informa que `free` nao esta disponivel para `background workers`, entao o preview roda com `CELERY_TASK_ALWAYS_EAGER=true`.
 - As tarefas assincronas sao executadas inline na API. Isso serve para demonstracao, nao para producao.
-- O Render `free` nao aceita `preDeployCommand`, entao neste preview a migration roda no `startCommand` da API antes do `uvicorn`.
+- Para reduzir risco de falha no plano gratis, este preview usa `AUTO_CREATE_TABLES=true` e sobe sem Alembic no boot.
 - O Render informa que `free web services` entram em idle apos 15 minutos sem trafego e podem levar cerca de 1 minuto para voltar.
 - O Render informa que o `free Postgres` expira 30 dias apos a criacao e nao oferece backups.
 - O Render informa que o `free Key Value` e apenas em memoria; se reiniciar, os dados somem.
