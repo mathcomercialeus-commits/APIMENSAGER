@@ -35,7 +35,7 @@ services:
       - key: AUTO_CREATE_TABLES
         value: "false"
       - key: BACKEND_CORS_ORIGINS
-        value: https://atendecrm-preview-web.onrender.com
+        value: '["https://atendecrm-preview-web.onrender.com"]'
       - key: SEED_SUPERADMIN
         value: "true"
       - key: SUPERADMIN_LOGIN
