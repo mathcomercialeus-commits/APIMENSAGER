@@ -28,6 +28,7 @@ from app.models.enums import (
     MessageType,
 )
 from app.models.platform import PlatformUser
+from app.schemas.common import MessageResponse
 from app.schemas.crm import (
     ContactCreate,
     ContactRead,
