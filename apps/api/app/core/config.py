@@ -25,7 +25,7 @@ def _normalize_database_url(value: str) -> str:
 
 
 def make_sync_database_url(value: str) -> str:
-    normalized = value.strip().replace("postgresql+asyncpg://", "postgresql://", 1)
+    normalized = value.strip().replace("postgresql+asyncpg://", "postgresql+psycopg://", 1)
     return _replace_query_key(normalized, "ssl", "sslmode")
 
 
