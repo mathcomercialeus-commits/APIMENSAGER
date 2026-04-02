@@ -4,6 +4,15 @@ from pydantic import EmailStr, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+def _normalize_database_url(value: str) -> str:
+    normalized = value.strip()
+    if normalized.startswith("postgres://"):
+        normalized = normalized.replace("postgres://", "postgresql+asyncpg://", 1)
+    elif normalized.startswith("postgresql://") and "+asyncpg" not in normalized:
+        normalized = normalized.replace("postgresql://", "postgresql+asyncpg://", 1)
+    return normalized
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -59,6 +68,11 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def normalize_database_url(cls, value: str) -> str:
+        return _normalize_database_url(value)
 
 
 @lru_cache
