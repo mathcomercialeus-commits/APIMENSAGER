@@ -41,7 +41,7 @@ services:
       - key: SUPERADMIN_LOGIN
         value: admin
       - key: SUPERADMIN_EMAIL
-        value: admin@plataforma.local
+        value: admin@example.com
       - key: SUPERADMIN_PASSWORD
         sync: false
       - key: JWT_SECRET_KEY

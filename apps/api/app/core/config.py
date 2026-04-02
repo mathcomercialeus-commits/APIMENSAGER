@@ -75,7 +75,7 @@ class Settings(BaseSettings):
     seed_superadmin: bool = True
     superadmin_full_name: str = "Administrador da Plataforma"
     superadmin_login: str = "owner"
-    superadmin_email: EmailStr = "owner@plataforma.local"
+    superadmin_email: EmailStr = "owner@example.com"
     superadmin_password: str = "TroqueEstaSenha123!"
 
     @field_validator("backend_cors_origins", mode="before")
