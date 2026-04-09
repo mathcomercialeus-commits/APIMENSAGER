@@ -1,0 +1,25 @@
+{
+  "settings": {
+    "timezone": "America/Sao_Paulo",
+    "integrations": {
+      "instagram": {
+        "mode": "mock",
+        "connected": false,
+        "accountId": ""
+      },
+      "facebook": {
+        "mode": "mock",
+        "connected": false,
+        "pageId": ""
+      },
+      "whatsapp": {
+        "mode": "mock",
+        "connected": false,
+        "phoneNumberId": ""
+      }
+    }
+  },
+  "users": [],
+  "posts": [],
+  "logs": []
+}

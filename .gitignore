@@ -12,3 +12,5 @@ dist/
 .venv/
 .mypy_cache/
 backups/
+data/uploads/*
+!data/uploads/.gitkeep

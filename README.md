@@ -1,120 +1,83 @@
-# AtendeCRM SaaS Platform
+# Social Scheduler Lite
 
-Plataforma web SaaS multiempresa e multiloja para atendimento e CRM via WhatsApp Business Platform, usando exclusivamente integracoes oficiais da Meta.
+Aplicacao web para agendamento de posts com imagem e video, autenticacao admin, dashboard, calendario, filtros, logs e arquitetura pronta para hospedagem simples no Render.
 
-## Escopo atual
-
-- `apps/api`: backend FastAPI tenant-aware
-- `apps/web`: frontend Next.js do portal SaaS
-- multiempresa, multiloja e RBAC
-- billing SaaS com Asaas
-- CRM de contatos e conversas
-- integracao oficial com Meta Cloud API
-- automacoes oficiais por loja e canal
-- status operacional por loja
-- restart logico por loja com auditoria
-- worker Celery para webhooks da Meta, billing e fila operacional
-- painel `Ops` com filas criticas de Meta, billing e automacoes
-- filtros operacionais por regra e canal na fila critica de automacoes
-- exportacao CSV e recorte por status/periodo na fila critica de automacoes
-- paginacao e ordenacao na fila critica de automacoes
-- paginacao e ordenacao nas filas criticas de Meta e billing
-- exportacao CSV nas filas criticas de Meta, billing e automacoes
-- deploy base com Docker Compose + Nginx
-
-## Estrutura principal
+## Estrutura
 
 ```text
 C:\APIMENEGER
-|-- apps
-|   |-- api
-|   `-- web
+|-- app.js
+|-- index.html
+|-- server.js
+|-- styles.css
+|-- data
+|   |-- store.json
+|   `-- uploads
 |-- docs
-|   `-- saas
-|-- infra
-|   |-- compose
-|   `-- nginx
-|-- packages
+|   |-- ARCHITECTURE.md
+|   `-- DEPLOY_FREE.md
 |-- scripts
-|   `-- saas
-`-- workers
+|   `-- smoke-test.sh
+`-- render.yaml
 ```
 
-## Subida rapida da plataforma SaaS
+## Funcionalidades
 
-1. Copie o arquivo de ambiente:
+- login de administrador
+- dashboard com estatisticas
+- upload de imagem e video
+- criacao, edicao e exclusao de posts
+- agendamento com bloqueio de datas passadas
+- calendario mensal
+- logs de publicacao
+- retries com backoff para falhas temporarias
+- endpoint manual de tick para cron externo
 
-```powershell
-Copy-Item C:\APIMENEGER\infra\compose\.env.saas.example C:\APIMENEGER\infra\compose\.env.saas
-```
+## Rodar localmente
 
-2. Preencha pelo menos:
-
-- `POSTGRES_PASSWORD`
-- `JWT_SECRET_KEY`
-- `DATA_ENCRYPTION_SECRET`
-- `SUPERADMIN_PASSWORD`
-- `ASAAS_API_KEY` quando usar billing real
-- credenciais reais da Meta quando ligar canais oficiais
-
-3. Suba a stack:
-
-```powershell
-C:\APIMENEGER\scripts\saas\deploy-compose.ps1
-```
-
-ou:
+1. Copie `.env.example` para `.env`.
+2. Defina `AUTH_SECRET`, `WORKER_SECRET` e `ADMIN_PASSWORD`.
+3. Rode:
 
 ```bash
-sh ./scripts/saas/deploy-compose.sh
+node server.js
 ```
 
-4. Acesse:
+4. Acesse [http://localhost:8080](http://localhost:8080).
 
-- portal web: [http://localhost:8080](http://localhost:8080)
-- API: [http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health)
+## Variaveis de ambiente
 
-## Documentacao SaaS
+- `PORT`
+- `NODE_ENV`
+- `APP_URL`
+- `DATA_DIR`
+- `AUTH_SECRET`
+- `WORKER_SECRET`
+- `ADMIN_USER`
+- `ADMIN_PASSWORD`
+- `MAX_UPLOAD_MB`
 
-- [Arquitetura](C:/APIMENEGER/docs/saas/architecture.md)
-- [Banco de dados](C:/APIMENEGER/docs/saas/database-model.md)
-- [Billing](C:/APIMENEGER/docs/saas/billing.md)
-- [Automacoes oficiais](C:/APIMENEGER/docs/saas/automations.md)
-- [Estrutura do projeto](C:/APIMENEGER/docs/saas/project-structure.md)
-- [Deploy SaaS](C:/APIMENEGER/docs/saas/deployment.md)
-- [Operacao](C:/APIMENEGER/docs/saas/operations.md)
-- [Webhooks Meta](C:/APIMENEGER/docs/saas/meta-webhooks.md)
-- [Hardening](C:/APIMENEGER/docs/saas/hardening.md)
+Em `production`, o servidor falha no boot se `AUTH_SECRET`, `WORKER_SECRET` ou `ADMIN_PASSWORD` estiverem ausentes ou com valores inseguros.
 
-## Limites reais neste ponto
+## Deploy no Render
 
-- O webhook oficial da Meta continua exigindo callback HTTPS publico.
-- O restart por loja implementado hoje e logico/persistido; ele nao reinicia um processo exclusivo por tenant.
-- Redis ja esta sendo consumido por um worker Celery dedicado para webhooks da Meta, billing, retry e dead-letter operacional.
-- O modulo de automacoes ja suporta execucao oficial via fila e envio pela Meta, incluindo gatilhos automaticos para conversa aberta, atribuicao e fora do horario na entrada oficial via webhook.
-- As automacoes agora usam retry com backoff e dead-letter, com reenfileiramento manual pelo superadmin no painel `Ops`.
-- O frontend SaaS foi escrito e conectado aos endpoints reais, mas ainda nao teve build Next.js validado nesta maquina porque `node` e `npm` nao estao instalados no ambiente local desta sessao.
+O arquivo [render.yaml](C:/APIMENEGER/render.yaml) ja prepara:
 
-## Regras de integracao com a Meta
+- web service Node
+- health check em `/health`
+- geracao automatica de `AUTH_SECRET` e `WORKER_SECRET`
+- exigencia manual de `ADMIN_PASSWORD`
 
-- sem WhatsApp Web automatizado
-- sem scraping
-- sem bibliotecas nao oficiais
-- templates aprovados para mensagens fora da janela de 24h
-- consentimento e opt-in quando aplicavel
+Depois do deploy:
 
-## Scripts uteis
+1. abra o servico no Render
+2. configure `ADMIN_PASSWORD` na aba `Environment`
+3. faca `Manual Deploy`
+4. teste `/health`
 
-```powershell
-C:\APIMENEGER\scripts\saas\deploy-compose.ps1
-C:\APIMENEGER\scripts\saas\backup-db.ps1
-C:\APIMENEGER\scripts\saas\restore-db.ps1 -InputPath C:\caminho\backup.sql
-C:\APIMENEGER\scripts\saas\logs.ps1
-```
+## Testes uteis
 
 ```bash
-sh ./scripts/saas/deploy-compose.sh
-sh ./scripts/saas/backup-db.sh
-sh ./scripts/saas/restore-db.sh ./infra/compose/backups/arquivo.sql
-sh ./scripts/saas/logs.sh
+npm run check
+npm run smoke
 ```

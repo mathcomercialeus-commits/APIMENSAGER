@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheduler Social Lite</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div id="login-view" class="centered">
+      <form id="login-form" class="card auth-card">
+        <h1>Social Scheduler</h1>
+        <p>Painel administrativo de agendamento.</p>
+        <label>
+          Usuario
+          <input id="username" required placeholder="admin">
+        </label>
+        <label>
+          Senha
+          <input id="password" type="password" required placeholder="********">
+        </label>
+        <button type="submit">Entrar</button>
+        <small id="login-error" class="error"></small>
+      </form>
+    </div>
+
+    <div id="app-view" class="hidden">
+      <header class="topbar">
+        <div>
+          <h2>Dashboard</h2>
+          <p id="welcome"></p>
+        </div>
+        <div class="top-actions">
+          <button id="new-post-btn">+ Novo post</button>
+          <button id="logout-btn" class="ghost">Sair</button>
+        </div>
+      </header>
+
+      <main class="container">
+        <section class="summary-grid">
+          <article class="card stat"><h3>Agendados</h3><strong id="count-agendado">0</strong></article>
+          <article class="card stat"><h3>Publicando</h3><strong id="count-publicando">0</strong></article>
+          <article class="card stat"><h3>Publicados</h3><strong id="count-publicado">0</strong></article>
+          <article class="card stat"><h3>Erro</h3><strong id="count-erro">0</strong></article>
+        </section>
+
+        <section class="card filters">
+          <label>
+            Status
+            <select id="status-filter">
+              <option value="">Todos</option>
+              <option value="agendado">Agendado</option>
+              <option value="publicando">Publicando</option>
+              <option value="publicado">Publicado</option>
+              <option value="erro">Erro</option>
+            </select>
+          </label>
+          <label>
+            Rede
+            <select id="network-filter">
+              <option value="">Todas</option>
+              <option value="instagram">Instagram</option>
+              <option value="facebook">Facebook</option>
+              <option value="whatsapp">WhatsApp</option>
+            </select>
+          </label>
+          <button id="refresh-btn" class="ghost">Atualizar</button>
+        </section>
+
+        <section class="grid-2">
+          <article class="card">
+            <h3>Calendario mensal</h3>
+            <div id="calendar" class="calendar"></div>
+          </article>
+
+          <article class="card">
+            <h3>Proximos agendamentos</h3>
+            <ul id="upcoming-list" class="list"></ul>
+          </article>
+        </section>
+
+        <section class="card">
+          <h3>Historico de posts</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Redes</th>
+                  <th>Status</th>
+                  <th>Legenda</th>
+                  <th>Acoes</th>
+                </tr>
+              </thead>
+              <tbody id="posts-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>Configuracoes</h3>
+          <form id="settings-form" class="settings-grid">
+            <label>
+              Timezone
+              <input id="timezone" placeholder="America/Sao_Paulo" required>
+            </label>
+            <label>
+              Instagram Account ID
+              <input id="ig-account" placeholder="Opcional">
+            </label>
+            <label>
+              Facebook Page ID
+              <input id="fb-page" placeholder="Opcional">
+            </label>
+            <label>
+              WhatsApp Phone Number ID
+              <input id="wa-phone" placeholder="Opcional">
+            </label>
+            <button type="submit">Salvar configuracoes</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <h3>Logs de publicacao</h3>
+          <ul id="logs-list" class="list logs"></ul>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="post-modal">
+      <form id="post-form" class="card modal-body">
+        <h3 id="modal-title">Novo post</h3>
+        <input type="hidden" id="editing-id">
+
+        <label>
+          Legenda
+          <textarea id="caption" maxlength="2200" required></textarea>
+        </label>
+
+        <fieldset>
+          <legend>Redes sociais</legend>
+          <label><input type="checkbox" value="instagram" class="network"> Instagram</label>
+          <label><input type="checkbox" value="facebook" class="network"> Facebook</label>
+          <label><input type="checkbox" value="whatsapp" class="network"> WhatsApp</label>
+        </fieldset>
+
+        <label>
+          Data e hora da publicacao
+          <input id="scheduled-at" type="datetime-local" required>
+        </label>
+
+        <label>
+          Midia (imagem/video)
+          <input id="media-file" type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/webm">
+        </label>
+
+        <div id="media-preview" class="preview">Sem midia selecionada</div>
+
+        <div class="modal-actions">
+          <button type="submit">Salvar agendamento</button>
+          <button type="button" id="cancel-modal" class="ghost">Cancelar</button>
+        </div>
+        <small id="post-error" class="error"></small>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
